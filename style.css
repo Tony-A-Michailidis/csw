@@ -1,514 +1,515 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Some imaginary institute's portal</title>
-        <!-- Google Fonts: Inter -->
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" media="screen" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <!-- Custom Styles -->
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <header class="app-header">
-            <div class="container">
-                <h1 class="header-title">Some imaginary institute's portal</h1>
-            </div>
-        </header>
+/* Color Palette */
+:root {
+    --primary-blue: #4A90E2;
+    --secondary-blue: #357ABD;
+    --light-grey-bg: #F0F2F5;
+    --white-bg: #FFFFFF;
+    --dark-text: #333333;
+    --muted-text: #666666;
+    --border-color: #E0E0E0;
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
 
-        <div class="main-content-wrapper">
-            <main class="container my-4">
-                <section class="app-section">
-                    <form id="form-search">
-                        <input type="hidden" id="input-startposition"/>
-                        <input type="hidden" id="hidden-matched"/>
-                        <input type="hidden" id="input-nextrecord"/>
-                        <div class="row mb-4 align-items-center">
-                            <div class="col-md-6 col-lg-4">
-                                <div class="input-group shadow-sm rounded-lg">
-                                    <input class="form-control" type="text" id="input-anytext" placeholder="Search Terms"/>
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-primary">Search</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-4 text-md-right mt-3 mt-md-0">
-                                <div class="form-check form-check-inline mr-4">
-                                    <input class="form-check-input" type="checkbox" id="input-bbox">
-                                    <label class="form-check-label" for="input-bbox">Filter by location</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="input-footprints">
-                                    <label class="form-check-label" for="input-footprints">Footprints</label>
-                                </div>
-                            </div>
-                        </div>
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--dark-text);
+    line-height: 1.6;
+    background-color: var(--light-grey-bg);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
-                        <div class="row">
-                            <div class="col-12"> <!-- Full width for results -->
-                                <div class="results-container card shadow-sm rounded-lg">
-                                    <div id="div-csw-results-glass" class="results-glass"></div>
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="tab-eccc" data-toggle="tab" href="#tab-csw-results-eccc" role="tab">Our Institute's meta-data</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="tab-edh" data-toggle="tab" href="#tab-csw-results-edh" role="tab">DFO's Enterprise Data Hub meta-data</a>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <div class="tab-pane fade show active" id="tab-csw-results-eccc" role="tabpanel">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover" id="table-csw-results-eccc">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Search Results</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>No results yet. Start searching!</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="tab-csw-results-edh" role="tabpanel">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover" id="table-csw-results-edh">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Search Results</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>No results yet. Start searching!</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center p-3 border-top">
-                                        <div id="div-results" class="results-info text-muted"></div>
-                                        <ul class="pagination mb-0">
-                                            <li id="li-previous" class="page-item disabled"><a class="page-link" id="a-previous" title="Previous" href="#">Previous</a></li>
-                                            <li id="li-next" class="page-item disabled"><a class="page-link" id="a-next" title="Next" href="#">Next</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </section>
-            </main>
-        </div>
+/* Main Content Wrapper for Centering and Max Width */
+.main-content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0; /* Add some vertical padding */
+}
 
-        <footer class="app-footer">
-            <div class="container">
-                <hr>
-                <a href="https://validator.w3.org/check?verbose=1&amp;uri=referer" title="Valid HTML 5!"><img src="https://www.w3.org/html/logo/downloads/HTML5_Badge_32.png" alt="Valid HTML 5!" height="32" width="32"/></a>
-                <a href="https://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS!"><img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88"/></a>
-            </div>
-        </footer>
+main.container {
+    max-width: 1200px; /* Max width for content */
+    width: 100%;
+    padding: 0 15px; /* Ensure padding on smaller screens */
+}
 
-        <!-- Modal Container -->
-        <div class="modal fade" id="modal-record-details" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content shadow-lg rounded-lg">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Record Details</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-                    </div>
-                    <div class="modal-body" id="modal-body-content">
-                        <!-- XML content will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- jQuery -->
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-        <!-- Bootstrap JS -->
-        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+/* App Header */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #6A82FB 100%); /* Gradient background */
+    color: var(--white-bg);
+    padding: 25px 0;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    min-height: 80px; /* Slightly taller header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        <script type="text/javascript">
-            // Your existing JavaScript logic goes here
-            // (Copied from your original portal.html)
+.header-title {
+    margin: 0;
+    font-size: 2.5em; /* Larger, more prominent heading */
+    font-weight: 700; /* Bolder for impact */
+    letter-spacing: -0.02em;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
 
-            var map = null; // Map variable no longer used, but kept for minimal changes to original logic
-            var map_layers_control = null; // No longer used
-            var csw_url_eccc_base = 'https://catalogue.ec.gc.ca/geonetwork/srv/eng/csw';
-            var csw_url_edh_base = 'https://api-proxy-dev.edh-cde.unclass.dfo-mpo.gc.ca/data-sharing/external/eng/csw';
-            var csw_url_eccc = 'https://catalogue.ec.gc.ca/geonetwork/srv/eng/csw';
-            var csw_url_edh = 'https://api-proxy-dev.edh-cde.unclass.dfo-mpo.gc.ca/data-sharing/external/eng/csw?request=GetRecords&typeNames=csw:Record&resultType=results&elementSetName=full&maxRecords=10&service=CSW&version=2.0.2'
-            var pagesize = 10;
+/* Section/Card Styling */
+.app-section {
+    background-color: var(--white-bg);
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: var(--shadow-light); /* Softer, modern shadow */
+    padding: 40px; /* More generous padding */
+    margin-top: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-            var protocols = {
-                "None": ["Unknown", "WWW"],
-                "ESRI:AIMS--http--configuration": ["ArcIMS Map Service Configuration File (*.AXL)", "ArcIMS"],
-                "ESRI:AIMS--http-get-feature": ["ArcIMS Internet Feature Map Service", "ArcIMS"],
-                "ESRI:AIMS--http-get-image": ["ArcIMS Internet Image Map Service", "ArcIMS"],
-                "GLG:KML-2.0-http-get-map": ["Google Earth KML service (ver 2.0)", "KML"],
-                "OGC:CSW": ["OGC-CSW Catalogue Service for the Web", "CSW"],
-                "OGC:KML": ["OGC-KML Keyhole Markup Language", "KML"],
-                "OGC:GML": ["OGC-GML Geography Markup Language", "GML"],
-                "OGC:ODS": ["OGC-ODS OpenLS Directory Service", "OpenLS"],
-                "OGC:OGS": ["OGC-ODS OpenLS Gateway Service", "OpenLS"],
-                "OGC:OUS": ["OGC-ODS OpenLS Utility Service", "OpenLS"],
-                "OGC:OPS": ["OGC-ODS OpenLS Presentation Service", "OpenLS"],
-                "OGC:ORS": ["OGC-ODS OpenLS Route Service", "OpenLS"],
-                "OGC:SOS": ["OGC-SOS Sensor Observation Service", "SOS"],
-                "OGC:SPS": ["OGC-SPS Sensor Planning Service", "SPS"],
-                "OGC:SAS": ["OGC-SAS Sensor Alert Service", "SAS"],
-                "OGC:WCS": ["OGC-WCS Web Coverage Service", "WCS"],
-                "OGC:WCS-1.1.0-http-get-capabilities": ["OGC-WCS Web Coverage Service (ver 1.1.0)", "WCS"],
-                "OGC:WCTS": ["OGC-WCTS Web Coordinate Transformation Service", "WCTS"],
-                "OGC:WFS": ["OGC-WFS Web Feature Service", "WFS"],
-                "OGC:WFS-1.0.0-http-get-capabilities": ["OGC-WFS Web Feature Service (ver 1.0.0)", "WFS"],
-                "OGC:WFS-G": ["OGC-WFS-G Gazzetteer Service", "WFS-G"],
-                "OGC:WMC-1.1.0-http-get-capabilities": ["OGC-WMC Web Map Context (ver 1.1)", "WMC"],
-                "OGC:WMS": ["OGC-WMS Web Map Service", "WMS"],
-                "OGC:WMS-1.1.1-http-get-capabilities": ["OGC-WMS Capabilities service (ver 1.1.1)", "WMS"],
-                "OGC:WMS-1.3.0-http-get-capabilities": ["OGC-WMS Capabilities service (ver 1.3.0)", "WMS"],
-                "OGC:WMS-1.1.1-http-get-map": ["OGC Web Map Service (ver 1.1.1)", "WMS"],
-                "OGC:WMS-1.3.0-http-get-map": ["OGC Web Map Service (ver 1.3.0)", "WMS"],
-                "OGC:SOS-1.0.0-http-get-observation": ["OGC-SOS Get Observation (ver 1.0.0)", "SOS"],
-                "OGC:SOS-1.0.0-http-post-observation": ["OGC-SOS Get Observation (POST) (ver 1.0.0)", "SOS"],
-                "OGC:WNS": ["OGC-WNS Web Notification Service", "WNS"],
-                "OGC:WPS": ["OGC-WPS Web Processing Service", "WPS"],
-                "WWW:DOWNLOAD-1.0-ftp--download": ["File for download through FTP", "FTP"],
-                "WWW:DOWNLOAD-1.0-http--download": ["File for download", "HTTP"],
-                "WWW:DOWNLOAD": ["File for download", "HTTP"],
-                "FILE:GEO": ["GIS file", "GIS"],
-                "FILE:RASTER": ["GIS RASTER file", "Raster"],
-                "WWW:LINK-1.0-http--ical": ["iCalendar (URL)", "iCal"],
-                "WWW:LINK-1.0-http--link": ["Web address (URL)", "WWW"],
-                "WWW:LINK-1.0-http--partners": ["Partner web address (URL)", "WWW"],
-                "WWW:LINK-1.0-http--related": ["Related link (URL)", "WWW"],
-                "WWW:LINK-1.0-http--rss": ["RSS News feed (URL)", "RSS"],
-                "WWW:LINK-1.0-http--samples": ["Showcase product (URL)", "WWW"],
-                "DB:POSTGIS": ["PostGIS database table", "PostGIS"],
-                "DB:ORACLE": ["ORACLE database table", "Oracle"],
-                "WWW:LINK-1.0-http--opendap": ["OPeNDAP URL", "OPeNDAP"],
-                "RBNB:DATATURBINE": ["Data Turbine", "turbine"],
-                "UKST": ["Unknown Service Type", "unknown"],
-                "WWW:LINK-1.0-http--image-thumbnail": ["Web image thumbnail (URL)", "thumb"],
-            };
+.app-section:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+}
 
-            function BoundingBox(xml) {
-                var ll = $(xml).find(escapeElementName('ows:LowerCorner')).text().split(' ');
-                var ur = $(xml).find(escapeElementName('ows:UpperCorner')).text().split(' ');
-                this.minx = ll[1];
-                this.miny = ll[0];
-                this.maxx = ur[1];
-                this.maxy = ur[0];
-                this.csv = [ll[0], ll[1], ur[0], ur[1]].join();
-            }
+/* Form Search */
+#form-search .row {
+    margin-bottom: 25px; /* More space below search row */
+}
 
-            function Link(xml) {
-                this.value = $(xml).text();
-                this.scheme = 'None';
-                var scheme = $(xml).attr('scheme');
-                if (scheme != 'None' && scheme != "") {
-                    this.scheme = scheme;
-                }
-            }
+/* Input and Button Styling */
+.form-control {
+    border-radius: 8px; /* More rounded input fields */
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem; /* Adjusted padding for a sleek look */
+    font-size: 1rem;
+    color: var(--dark-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-            function CswRecord(xml) {
-                this.identifier = $(xml).find(escapeElementName('dc:identifier')).text();
-                this.type = $(xml).find(escapeElementName('dc:type')).text();
-                this.title = $(xml).find(escapeElementName('dc:title')).text();
-                this.abstract = $(xml).find(escapeElementName('dct:abstract')).text();
-                this.publisher = $(xml).find(escapeElementName('dc:publisher')).text();
-                this.abstract2 = $(xml).find(escapeElementName('dct:abstract')).text();
-                this.source = $(xml).find(escapeElementName('dc:source')).text();
-                this.date = $(xml).find(escapeElementName('dc:date')).text();
-                this.modified = $(xml).find(escapeElementName('dct:modified')).text();
-                this.references = [];
-                this.bbox = new BoundingBox($(xml).find(escapeElementName('ows:BoundingBox')));
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25); /* Subtle blue focus glow */
+}
 
-                var self = this;
+.input-group-append .btn-primary {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none; /* Remove border between input and button */
+}
 
-                // get all links
-                $(xml).find(escapeElementName('dct:references')).each(function() {
-                    self.references.push(new Link($(this)));
-                });
-            }
+.input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
 
-            function truncate(value, length) {
-                if (value.length > length) {
-                    return value.substring(0, length) + '...';
-                }
-                return value;
-            }
 
-            function escapeElementName(str) {
-                return str.replace(':', '\\:').replace('.', '\\.');
-            }
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    border-radius: 8px; /* More rounded buttons */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0.5rem 1.2rem; /* Adjusted to align with input field */
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
-            function style_record(rec) {
-                var snippet = '<tr><th scope="row">';
-                var links = "";
-                // get all links
-                for (var i = 0; i < rec.references.length; i++) {
-                    if (rec.references[i].value != "None" && rec.references[i].value.lastIndexOf("http", 0) === 0) {
-                        console.log(rec.references[i]);
-                        if (rec.references[i].scheme in protocols) {
-                            links += ' <a class="btn btn-sm btn-outline-info" title="' + protocols[rec.references[i].scheme][0] + '" href="' + rec.references[i].value + '" target="_blank">' + protocols[rec.references[i].scheme][1] + '</a> ';
-                        }
-                    }
-                }
+.btn-primary:hover {
+    background-color: var(--secondary-blue);
+    border-color: var(--secondary-blue);
+    transform: translateY(-2px); /* More pronounced lift on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
 
-                var activeTabId = $('.nav-tabs .active').attr('id');
-                var csw_url_used = (activeTabId === 'tab-edh') ? csw_url_edh_base : csw_url_eccc_base;
-                var url = csw_url_used + "?service=CSW&version=2.0.2&request=GetRecordById&elementsetname=full&id=" + rec.identifier;
-                var title2 = '<a href="#" class="a-record" data-url="' + url + '" data-bbox="' + rec.bbox.csv + '" title="' + rec.title + '">' + rec.title + '</a>';
-                snippet += '<h5>' + title2 + '</h5>';
-                snippet += '<p class="abstract-text">' + truncate(rec.abstract, 255) + '</p>';
-                snippet += '<p class="publisher-info"><em>' + rec.publisher + '</em></p>';
-                snippet += '<p class="date-info"><small><strong>Date</strong>: ' + rec.date + '</small></p>';
-                snippet += '<div class="record-links">' + links + '</div>';
-                snippet += '</th></tr>';
-                return snippet;
-            }
-            function search(serviceType, startposition) {
-                $('#div-csw-results-glass').show(); // Show glass overlay
+.btn-sm {
+    padding: 0.4rem 0.9rem; /* Slightly larger small buttons */
+    font-size: 0.875rem;
+    border-radius: 6px;
+}
 
-                if (!startposition) {
-                    startposition = 1;
-                }
-                var freetext = $('#input-anytext').val().trim();
-                var bbox_enabled = $('#input-bbox').is(':checked');
-                var sortby = $('#select-sortby option:selected').val(); // This element does not exist in HTML, might cause error
+.btn-secondary {
+    background-color: var(--muted-text);
+    border-color: var(--muted-text);
+    color: var(--white-bg);
+}
 
-                var qbbox = ''; // Initialize qbbox
-                if (bbox_enabled) {
-                    // Since map is removed, we cannot get bounds from it.
-                    // If bbox filtering is still desired, this logic needs to be re-thought (e.g., manual input, or a different map library).
-                    // For now, it will effectively do nothing without a map.
-                }
+.btn-secondary:hover {
+    background-color: #555555;
+    border-color: #555555;
+}
 
-                url_para = '?service=CSW&version=2.0.2&request=GetRecords&resultType=results&startPosition=' + startposition + '&maxRecords=' + pagesize + '&typeNames=csw:Record&ElementSetName=full';
-                data = '<csw:GetRecords maxRecords="' + pagesize + '" startPosition="' + startposition + '" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" resultType="results" service="CSW" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><csw:Query typeNames="csw:Record"><csw:ElementSetName>full</csw:ElementSetName>';
-                if (freetext != '') {
-                    url_para += '&constraintLanguage=CQL_TEXT&constraint_language_version=1.1.0&constraint=csw:AnyText LIKE \'' + $("#input-anytext").val().trim() + '\'';
-                    if (bbox_enabled) {
-                        data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:And><ogc:PropertyIsLike escapeChar="\\" singleChar="_" wildCard="%"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>' + $("#input-anytext").val().trim() + '</ogc:Literal></ogc:PropertyIsLike>' + qbbox + '</ogc:And></ogc:Filter></csw:Constraint>';
-                    }
-                    else {
-                        data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:PropertyIsLike escapeChar="\\" singleChar="_" wildCard="%"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>' + $("#input-anytext").val().trim() + '</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></csw:Constraint>';
-                    }
-                }
-                else if (bbox_enabled) {
-                    data += '<csw:Constraint version="1.1.0"><ogc:Filter>' + qbbox + '</ogc:Filter></csw:Constraint>';
-                }
+.btn-outline-info {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    transition: all 0.2s ease;
+}
 
-                data += '</csw:Query></csw:GetRecords>';
-                url_para = encodeURI(url_para);
+.btn-outline-info:hover {
+    background-color: var(--primary-blue);
+    color: var(--white-bg);
+}
 
-                var requestType = (serviceType === 'ECCC') ? 'POST' : 'GET';
-                var url = (serviceType === 'ECCC') ? csw_url_eccc : csw_url_edh_base + url_para;
+/* Checkbox Styling */
+.form-check-label {
+    color: var(--muted-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
 
-                var ajaxSettings = {
-                    type: requestType,
-                    url: url,
-                    contentType: 'application/xml',
-                    success: function(xml, status, xhr) {
-                        var tableSelector = (serviceType === 'ECCC') ? '#table-csw-results-eccc' : '#table-csw-results-edh';
-                        $(tableSelector).empty();
-                        $('#div-csw-results-glass').hide(); // Hide glass overlay
-                        //alert(xml);
-                        // derive results for paging
-                        var matched = parseInt($(xml).find(escapeElementName('csw:SearchResults')).attr('numberOfRecordsMatched'));
-                        var returned = parseInt($(xml).find(escapeElementName('csw:SearchResults')).attr('numberOfRecordsReturned'));
-                        var nextrecord = parseInt($(xml).find(escapeElementName('csw:SearchResults')).attr('nextRecord'));
+/* Map Styling (Removed as map is removed) */
+/* .map-container {
+    height: 350px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+} */
 
-                        $('#input-startposition').val(startposition);
-                        $('#input-nextrecord').val(nextrecord);
-                        $('#hidden-matched').val(matched);
+/* CSW Results Area (Now acts as a card) */
+.results-container {
+    position: relative;
+    /* Adjusted height for full-width layout, considering header, footer, and form */
+    /* Original: calc(100vh - 660px) when map was present */
+    /* Now: Header (60px) + main padding (40px) + section padding (60px) + form row (approx 50px) + footer (approx 100px) = ~310px */
+    height: calc(100vh - 310px);
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-light); /* Consistent shadow with app-section */
+    overflow: hidden; /* Ensures content stays within rounded corners */
+}
 
-                        if (matched == 0) {
-                            $('#div-results').html('');
-                            $(tableSelector).html('<tbody><tr><td>No results found.</td></tr></tbody>');
-                            $('#li-previous').addClass('disabled');
-                            $('#li-next').addClass('disabled');
-                            return;
-                        }
-                        if (nextrecord == 0 || nextrecord >= matched) { // at the end
-                            $('#li-next').addClass('disabled');
-                            nextrecord = matched;
-                        }
-                        else {
-                            $('#li-next').removeClass('disabled');
-                        }
-                        if (startposition == 1) {
-                            $('#li-previous').addClass('disabled');
-                        }
-                        else {
-                            $('#li-previous').removeClass('disabled');
-                        }
+.results-glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9); /* More opaque for loading */
+    border-radius: 12px; /* Match container radius */
+    display: none; /* Hidden by default, shown by JS */
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    color: var(--primary-blue);
+    font-weight: 600;
+}
 
-                        var lastRecord = (nextrecord == 0 || nextrecord >= matched) ? matched : nextrecord - 1;
-                        results = '<strong>Results ' + startposition + '-' + lastRecord + ' of ' + matched + ' record(s)</strong>';
+/* Navigation Tabs */
+.nav-tabs {
+    background-color: var(--white-bg); /* Tabs on white background */
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 20px; /* More padding for tabs */
+    margin-bottom: 0; /* Remove default margin */
+}
 
-                        $('#div-results').html(results);
+.nav-item {
+    margin-bottom: -1px;
+}
 
-                        $(escapeElementName('csw:Record'),xml).each(function(record) {
-                            var rec = new CswRecord($(this));
-                            $(tableSelector).append(style_record(rec));
-                        })
-                    },
-                    error: function(xhr, textStatus) {
-                        if (xhr.status === 401 && serviceType === 'EDH') {
-                            $('#div-csw-results-glass').hide();
-                            $('#div-results').html('<div class="alert alert-warning" role="alert">Login required for EDH CSW. Please search again after logging in.</div>');
-                            console.log('Search error:', textStatus);
-                        }else{
-                            $('#div-csw-results-glass').hide();
-                            $('#div-results').html('<div class="alert alert-danger" role="alert">An error occurred while fetching data. Please try again.</div>');
-                            console.log('Search error:', textStatus);
-                        }
-                    },
-                    complete: function(xhr, textStatus) {
-                        if (xhr.status === 401 && serviceType === 'EDH') {
-                            try {
-                                var response = JSON.parse(xhr.responseText);
-                                if (response.location) {
-                                    window.open(response.location, '_blank', 'width=1000,height=1000');
-                                }
-                            } catch(e) {
-                                console.log('Error parsing response:', e);
-                            }
-                        }
-                    }
-                };
-                if (serviceType === 'ECCC') {
-                    ajaxSettings.data = data;
-                }
-                if (serviceType === 'EDH') {
+.nav-link {
+    color: var(--muted-text);
+    font-weight: 600;
+    padding: 15px 25px; /* More padding for tabs */
+    transition: color 0.3s ease, border-color 0.3s ease;
+    border: none; /* Remove default border */
+    border-bottom: 3px solid transparent; /* Underline effect */
+    font-size: 1.05rem;
+}
 
-                    ajaxSettings.withCredentials = true;
-                    ajaxSettings.crossDomain = true;
-                    ajaxSettings.xhrFields = { withCredentials: true };
-                }
-                $.ajax(ajaxSettings);
-            }
-            $(document).ready(function(){
-                $("#form-search").on('submit', function(e) {
-                    e.preventDefault();
-                    var activeTabId = $('.nav-tabs .active').attr('id');
-                    if (activeTabId === 'tab-edh') {
-                        search("EDH");
-                    } else {
-                        search("ECCC");
-                    }
-                });
-                $('#a-previous').click(function(event){
-                    event.preventDefault();
-                    startposition2 = $('#input-startposition').val()-pagesize;
-                    if (startposition2 < 1) {
-                        return;
-                    }
-                    //check which tab is active, then search based on the type
-                    var activeTabId = $('.nav-tabs .active').attr('id');
-                    if (activeTabId === "tab-edh") {
-                        search("EDH", startposition2);
-                    } else {
-                        search("ECCC", startposition2);
-                    }
-                });
-                $('#a-next').click(function(event){
-                    event.preventDefault();
-                    nextrecord2 = parseInt($('#input-nextrecord').val());
-                    matched2 = parseInt($('#hidden-matched').val());
-                    if (nextrecord2 == 0 || nextrecord2>=matched2) {
-                        return;
-                    }
-                    var activeTabId = $('.nav-tabs .active').attr('id');
-                    if (activeTabId === "tab-edh") {
-                        search("EDH", nextrecord2);
-                    } else {
-                        search("ECCC", nextrecord2);
-                    }
-                });
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    var activeTabId = $(e.target).attr("id");
-                    if (activeTabId === "tab-edh") {
-                        search("EDH");
-                    } else if (activeTabId === "tab-eccc") {
-                        search("ECCC");
-                    }
-                });
-                // page load, init the results table with CSW results
-                search("ECCC");
-                $('body').on('click', 'a.a-record', function(e) {
-                    e.preventDefault();
-                    var serviceType = $('.nav-tabs .active').attr('id').replace('tab-', '');
-                    var fetchUrl = $(this).data('url');
-                    var ajaxSettings = {
-                        url: fetchUrl,
-                        success: function(data) {
-                            var xml = $(data);
-                            var title = xml.find('dc\\:title').text() || 'N/A';
-                            var identifier = xml.find('dc\\:identifier').text() || 'N/A';
-                            var date = xml.find('dc\\:date').first().text() || 'N/A';
-                            var abstractText = xml.find('dct\\:abstract, dc\\:description').first().text() || 'N/A';
-                            var subjects = [];
-                            xml.find('dc\\:subject').each(function() {
-                                subjects.push($(this).text());
-                            });
+.nav-link.active {
+    color: var(--primary-blue);
+    background-color: transparent; /* No background change for active */
+    border-color: var(--primary-blue); /* Blue underline for active */
+}
 
-                            // Parse attached resources
-                            var resources = [];
-                            xml.find('dc\\:URI').each(function() {
-                                var dupeUrl = $(this).text() || '#';
-                                if (!resources.some(r => r.url === dupeUrl)) {
-                                    resources.push({
-                                        url: dupeUrl,
-                                        name: $(this).attr('name') || 'Resource'
-                                    });
-                                }
-                            });
+.nav-link:hover:not(.active) {
+    color: var(--dark-text);
+    border-color: var(--border-color); /* Subtle underline on hover */
+}
 
-                            var modalContent = '<div>'
-                                + '<p><strong>Title:</strong> ' + title + '</p>'
-                                + '<p><strong>Identifier:</strong> ' + identifier + '</p>'
-                                + '<p><strong>Date:</strong> ' + date + '</p>'
-                                + '<p><strong>Subjects:</strong> ' + (subjects.join(', ') || 'N/A') + '</p>'
-                                + '<p><strong>Abstract:</strong> ' + abstractText + '</p>';
+/* Tab Content */
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px; /* More padding for tab content */
+}
 
-                            // Add a resource list
-                            if (resources.length > 0) {
-                                modalContent += '<p><strong>Resources:</strong></p><ul>';
-                                for (var i = 0; i < resources.length; i++) {
-                                    modalContent += '<li><a target="_blank" href="' + resources[i].url + '">' + resources[i].name + '</a></li>';
-                                }
-                                modalContent += '</ul>';
-                            }
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Space between rows */
+}
 
-                            modalContent += '</div>';
+.table th, .table td {
+    padding: 15px 20px; /* More padding in cells */
+    vertical-align: middle; /* Align content vertically */
+    border-top: none; /* Remove top border */
+    border-bottom: 1px solid var(--border-color); /* Only bottom border for separation */
+}
 
-                            $('#modal-body-content').html(modalContent);
-                            $('#modal-record-details').modal('show');
-                        },
-                        error: function() {
-                            $('#modal-body-content').text('Failed to load record details.');
-                            $('#modal-record-details').modal('show');
-                        }
-                    };
-                    if (serviceType.toUpperCase() === 'EDH') {
-                        ajaxSettings.dataType = 'xml';
-                        ajaxSettings.withCredentials = true;
-                        ajaxSettings.crossDomain = true;
-                        ajaxSettings.xhrFields = { withCredentials: true };
-                    }
-                    $.ajax(ajaxSettings);
-                });
-            });
-        </script>
-    </body>
-</html>
+.table thead th {
+    background-color: var(--light-grey-bg); /* Light grey header */
+    font-weight: 700;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--primary-blue); /* Stronger bottom border for header */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table tbody tr {
+    background-color: var(--white-bg);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 8px; /* Rounded corners for rows */
+    overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+.table tbody tr:hover {
+    background-color: var(--light-grey-bg);
+    transform: translateY(-2px); /* Slight lift on row hover */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table h5 {
+    font-size: 1.15em;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.table h5 a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.table h5 a:hover {
+    color: var(--secondary-blue);
+    text-decoration: underline;
+}
+
+.abstract-text {
+    font-size: 0.9em;
+    color: var(--muted-text);
+    margin-bottom: 8px;
+}
+
+.publisher-info, .date-info {
+    font-size: 0.85em;
+    color: #999999;
+    margin-bottom: 5px;
+}
+
+.record-links .btn {
+    margin-right: 8px;
+    margin-top: 8px;
+}
+
+/* Results Info */
+.results-info {
+    font-weight: 500;
+    color: var(--muted-text);
+    font-size: 0.95rem;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 0;
+}
+
+.page-item .page-link {
+    border-radius: 6px;
+    margin: 0 4px;
+    color: var(--primary-blue);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white-bg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-item.disabled .page-link {
+    color: #B0B0B0;
+    pointer-events: none;
+    background-color: #F8F8F8;
+    border-color: #E9E9E9;
+}
+
+.page-item .page-link:hover:not(.active):not(.disabled) {
+    background-color: #E0EBF8;
+    border-color: #C0D8F0;
+    color: var(--secondary-blue);
+}
+
+
+/* Footer */
+.app-footer {
+    background-color: var(--dark-text); /* Darker footer background */
+    color: rgba(255, 255, 255, 0.7);
+    padding: 25px 0;
+    text-align: center;
+    margin-top: auto;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    font-size: 0.85rem;
+}
+
+.app-footer hr {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 15px auto;
+    width: 70%;
+}
+
+.app-footer img {
+    margin: 0 12px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.app-footer img:hover {
+    opacity: 1;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 12px; /* More rounded modal */
+    box-shadow: var(--shadow-medium);
+}
+
+.modal-header {
+    background: linear-gradient(90deg, var(--primary-blue) 0%, #6A82FB 100%); /* Gradient header */
+    color: var(--white-bg);
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 20px 25px;
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.modal-header .close {
+    color: var(--white-bg);
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 30px;
+    color: var(--dark-text);
+    font-size: 0.95rem;
+}
+
+.modal-body p {
+    margin-bottom: 12px;
+}
+
+.modal-body strong {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.modal-body ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 15px;
+}
+
+.modal-body ul li {
+    margin-bottom: 8px;
+}
+
+.modal-body ul li a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.modal-body ul li a:hover {
+    text-decoration: underline;
+    color: var(--secondary-blue);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* Medium to small screens */
+    .app-header {
+        min-height: 70px;
+        padding: 15px 0;
+    }
+    .header-title {
+        font-size: 2.2em;
+    }
+    .app-section {
+        padding: 25px;
+    }
+    .results-container {
+        height: calc(100vh - 300px); /* Adjust height for smaller screens */
+    }
+    .nav-tabs {
+        padding: 0 10px;
+    }
+    .nav-link {
+        padding: 12px 20px;
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 767.98px) { /* Small screens (mobile) */
+    .app-header {
+        min-height: 60px;
+        padding: 10px 0;
+    }
+    .header-title {
+        font-size: 1.8em;
+    }
+    .app-section {
+        padding: 15px;
+    }
+    .results-container {
+        height: 500px; /* Fixed height for results on mobile */
+    }
+    .form-check-inline {
+        display: block;
+        margin-bottom: 8px;
+        margin-right: 0 !important; /* Remove inline margin */
+    }
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .pagination {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: center;
+    }
+    .results-info {
+        margin-bottom: 10px;
+    }
+    .table th, .table td {
+        padding: 10px 15px;
+    }
+}
