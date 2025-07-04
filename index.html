@@ -8,26 +8,41 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
     <style>
         body { background-color: #f1f3f5; }
-        .card { border: none; border-radius: 0.5rem; }
+        .card { border: none; border-radius: 0.5rem; position: relative; }
         .nav-tabs .nav-link { font-weight: 500; }
         .search-bar .form-control { border-right: 0; }
         .search-bar .input-group-append .btn { border-radius: 0 0.5rem 0.5rem 0; }
         .table thead th { border-bottom: 2px solid #dee2e6; }
         #div-results { margin-top: 1rem; }
+        #div-csw-results-glass {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255,255,255,0.6);
+            z-index: 1000;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container my-5">
         <h1 class="mb-4">Institute XYZ</h1>
         <div class="card shadow-sm">
+            <div id="div-csw-results-glass"></div>
             <div class="card-body">
                 <form id="form-search">
+                    <!-- Hidden paging inputs -->
+                    <input type="hidden" id="input-startposition" />
+                    <input type="hidden" id="input-nextrecord" />
+                    <input type="hidden" id="input-matched" />
+                    <!-- Search input + button -->
                     <div class="input-group input-group-lg mb-4 search-bar">
                         <input type="text" id="input-anytext" class="form-control" placeholder="Search Terms" />
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Search</button>
                         </div>
                     </div>
+                    <!-- Tabs -->
                     <ul class="nav nav-tabs" id="cswTabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="tab-eccc" data-toggle="tab" href="#tab-csw-results-eccc" role="tab">Our institute's data</a>
@@ -81,11 +96,26 @@
         var csw_url_edh_base  = 'https://api-proxy-dev.edh-cde.unclass.dfo-mpo.gc.ca/data-sharing/external/eng/csw';
         var pagesize = 10;
 
+        function showLoading(show) {
+            if (show) $('#div-csw-results-glass').show(); else $('#div-csw-results-glass').hide();
+        }
+
+        function updatePagination(start, next, matched) {
+            $('#input-startposition').val(start);
+            $('#input-nextrecord').val(next);
+            $('#input-matched').val(matched);
+            var end = next ? next - 1 : start + pagesize - 1;
+            if (end > matched) end = matched;
+            $('#div-results').text('Results ' + start + ' to ' + end + ' of ' + matched);
+            $('#li-previous').toggleClass('disabled', start <= 1);
+            $('#li-next').toggleClass('disabled', !next || next > matched);
+        }
+
         function search(serviceType, startposition) {
             if (!startposition) startposition = 1;
             var freetext = $('#input-anytext').val().trim();
-            var url_para = '?service=CSW&version=2.0.2&request=GetRecords&ElementSetName=full&maxRecords=' + pagesize + '&typeNames=csw:Record';
-            var data = '<csw:GetRecords maxRecords="' + pagesize + '" service="CSW" version="2.0.2"><csw:Query typeNames="csw:Record"><csw:ElementSetName>full</csw:ElementSetName>';
+            var url_para = '?service=CSW&version=2.0.2&request=GetRecords&ElementSetName=full&maxRecords=' + pagesize + '&startPosition=' + startposition + '&typeNames=csw:Record';
+            var data = '<csw:GetRecords maxRecords="' + pagesize + '" service="CSW" version="2.0.2" startPosition="' + startposition + '"><csw:Query typeNames="csw:Record"><csw:ElementSetName>full</csw:ElementSetName>';
             if (freetext) {
                 url_para += '&constraintLanguage=CQL_TEXT&constraint=csw:AnyText LIKE \'%' + freetext + '%\'';
                 data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:PropertyIsLike wildCard="%" singleChar="." escapeChar="!"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>%' + freetext + '%</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></csw:Constraint>';
@@ -95,14 +125,22 @@
             var requestType = (serviceType === 'ECCC') ? 'POST' : 'GET';
             var url = (serviceType === 'ECCC') ? csw_url_eccc_base : csw_url_edh_base + url_para;
 
+            showLoading(true);
             var ajaxSettings = {
                 type: requestType,
                 url: url,
                 contentType: 'application/xml',
-                success: function(xml, status, xhr) {
+                data: (serviceType === 'ECCC') ? data : null,
+                crossDomain: (serviceType === 'EDH'),
+                xhrFields: (serviceType === 'EDH') ? { withCredentials: true } : {},
+                success: function(xml) {
                     var tableSelector = (serviceType === 'ECCC') ? '#table-csw-results-eccc tbody' : '#table-csw-results-edh tbody';
                     $(tableSelector).empty();
-                    $('#div-results').empty();
+                    var resultsEl = $('#cswTabsContent');
+                    var searchResults = $(xml).find('csw\\:SearchResults, SearchResults').first();
+                    var matched = parseInt(searchResults.attr('numberOfRecordsMatched') || '0', 10);
+                    var next = parseInt(searchResults.attr('nextRecord') || '0', 10);
+                    updatePagination(startposition, next, matched);
                     $(xml).find('csw\\:Record, Record').each(function() {
                         var title = $(this).find('dc\\:title, title').first().text();
                         var date  = $(this).find('dc\\:date, date').first().text();
@@ -110,36 +148,20 @@
                         $(tableSelector).append('<tr><td>' + title + '</td><td>' + date + '</td><td>' + desc + '</td></tr>');
                     });
                 },
-                error: function(xhr, textStatus) {
+                error: function(xhr) {
                     if (xhr.status === 401 && serviceType === 'EDH') {
                         $('#div-results').html('After login, please search again.');
-                        console.log('Search error:', textStatus);
+                        var resp = {};
+                        try { resp = JSON.parse(xhr.responseText); } catch(e) {}
+                        if (resp.location) window.open(resp.location, '_blank', 'width=1000,height=1000');
                     } else {
                         $('#div-results').html('An error occurred while fetching data.');
-                        console.log('Search error:', textStatus);
                     }
                 },
-                complete: function(xhr, textStatus) {
-                    if (xhr.status === 401 && serviceType === 'EDH') {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.location) {
-                                window.open(response.location, '_blank', 'width=1000,height=1000');
-                            }
-                        } catch(e) {
-                            console.log('Error parsing response:', e);
-                        }
-                    }
+                complete: function() {
+                    showLoading(false);
                 }
             };
-            if (serviceType === 'ECCC') {
-                ajaxSettings.data = data;
-            }
-            if (serviceType === 'EDH') {
-                ajaxSettings.withCredentials = true;
-                ajaxSettings.crossDomain = true;
-                ajaxSettings.xhrFields = { withCredentials: true };
-            }
             $.ajax(ajaxSettings);
         }
 
@@ -153,8 +175,23 @@
                 var service = $(e.target).attr('id') === 'tab-edh' ? 'EDH' : 'ECCC';
                 search(service);
             });
+            $('#a-previous').on('click', function(e) {
+                e.preventDefault();
+                var start = parseInt($('#input-startposition').val() || '1', 10);
+                if (start > 1) search($('.nav-tabs .active').attr('id') === 'tab-edh' ? 'EDH' : 'ECCC', start - pagesize);
+            });
+            $('#a-next').on('click', function(e) {
+                e.preventDefault();
+                var nxt = parseInt($('#input-nextrecord').val() || '0', 10);
+                if (nxt) search($('.nav-tabs .active').attr('id') === 'tab-edh' ? 'EDH' : 'ECCC', nxt);
+            });
             // initial load
             search('ECCC');
+            // record click handler
+            $('table').on('click', 'tr', function() {
+                var title = $(this).find('td').first().text();
+                alert('You clicked on record: ' + title);
+            });
         });
     </script>
 </body>
