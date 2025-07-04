@@ -1,155 +1,125 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>pycsw viewer</title>
-        <style type="text/css">
-            #div-map {
-                /* width: 400px; */
-                height: 300px;
-            }
-            #div-csw-results, #div-csw-results-glass {
-                width: 500px;
-                height: calc(100vh - 350px);
-                overflow-y: auto;
-            }
-            #div-csw-results-glass {
-                background-color: white;
-                filter:alpha(opacity=50); /* IE */
-                opacity: 0.5; /* Safari, Opera */
-                -moz-opacity:0.50; /* FireFox */
-                z-index: 20;
-                background-repeat:no-repeat;
-                background-position:center;
-                position:absolute;
-                display: none;
-            }
-            .nav-tabs {
-                position: sticky;
-                top: 0;
-                z-index: 999;
-                background-color: #fff;
-            }
-            footer {
-                position: fixed;
-                left: 0;
-                bottom: 0;
-                height: 100px;
-                width: 100%;
-            }
-        </style>
-        <!-- leaflet -->
+        <!-- Google Fonts: Inter -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-        <script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-
-        <!-- jQuery -->
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
-        <!-- Bootstrap -->
+        <!-- Bootstrap CSS -->
         <link rel="stylesheet" media="screen" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
-        
+        <!-- Custom Styles -->
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <header>
-            <h1>External Partner CSW Client UI</h1>
-            <div>&nbsp;</div>
-	</header>
-        <section>
-            <div class="panel">
+        <header class="app-header">
+            <div class="container">
+                <h1>External Partner CSW Client UI</h1>
+                <p>-- a copy of pycsw viewer with Many bug fixes and enhancements</p>
+            </div>
+        </header>
+
+        <main class="container my-4">
+            <section class="app-section">
                 <form id="form-search">
                     <input type="hidden" id="input-startposition"/>
                     <input type="hidden" id="input-matched"/>
                     <input type="hidden" id="input-nextrecord"/>
-                    <div class="row">
-                        <div class="col-sm-4" id="descriptioin"><strong>-- a copy of pycsw viewer with Many bug fixes and enhancements</strong></div>
-                        <div id="div-bbox" style="display: none;"><strong>Filter by location</strong> <input type="checkbox" id="input-bbox"/> <strong>Footprints</strong> <input type="checkbox" id="input-footprints"/></div>
-                        <div class="col-sm-4 text-right" id="div-search">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-6 col-lg-4">
                             <div class="input-group">
-                                <input class="form-control input-medium" type="text" id="input-anytext" placeholder="Search Terms"/>
+                                <input class="form-control" type="text" id="input-anytext" placeholder="Search Terms"/>
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 col-lg-4 text-md-right mt-2 mt-md-0">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="input-bbox">
+                                <label class="form-check-label" for="input-bbox">Filter by location</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="input-footprints">
+                                <label class="form-check-label" for="input-footprints">Footprints</label>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="row">
-                        <div class="col-sm-4" id="div-map"></div>
-                        <div class="col-sm-4">
-                            <div class="row">
-                                <div id="div-csw-results-glass"></div>
-                                <div class="col-sm-12" id="div-tabs-container">
-                                    <!-- Add tabs for two CSW services (moved out of scrolling container) -->
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="tab-eccc" data-toggle="tab" href="#tab-csw-results-eccc" role="tab">ECCC CSW</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="tab-edh" data-toggle="tab" href="#tab-csw-results-edh" role="tab">EDH CSW (login required)</a>
-                                        </li>
+                        <div class="col-lg-6 mb-4">
+                            <div id="div-map" class="map-container"></div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="results-container">
+                                <div id="div-csw-results-glass" class="results-glass"></div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="tab-eccc" data-toggle="tab" href="#tab-csw-results-eccc" role="tab">ECCC CSW</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-edh" data-toggle="tab" href="#tab-csw-results-edh" role="tab">EDH CSW (login required)</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="tab-csw-results-eccc" role="tabpanel">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="table-csw-results-eccc">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Search Results</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>No results yet. Start searching!</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab-csw-results-edh" role="tabpanel">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="table-csw-results-edh">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Search Results</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>No results yet. Start searching!</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div id="div-results" class="results-info"></div>
+                                    <ul class="pagination mb-0">
+                                        <li id="li-previous" class="page-item disabled"><a class="page-link" id="a-previous" title="Previous" href="#">Previous</a></li>
+                                        <li id="li-next" class="page-item disabled"><a class="page-link" id="a-next" title="Next" href="#">Next</a></li>
                                     </ul>
-                                </div>
-                                <div class="col-sm-12" id="div-csw-results">
-                                    <div class="tab-content">
-                                        <div class="tab-pane fade show active" id="tab-csw-results-eccc" role="tabpanel">
-                                            <div id="div-csw-results-eccc">
-                                                <table class="table" id="table-csw-results-eccc">
-                                                    <thead>
-                                                        <tr>
-                                                            <td></td>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="tab-csw-results-edh" role="tabpanel">
-                                            <div id="div-csw-results-edh">
-                                                <table class="table" id="table-csw-results-edh">
-                                                    <thead>
-                                                        <tr>
-                                                            <td></td>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12 text-center container">
-                                        <div id="div-results"></div>
-                                        <ul class="pagination">
-                                            <li id="li-previous" class="page-item"><a class="page-link" id="a-previous" title="Previous" href="#">Previous</a></li>
-                                            <li id="li-next" class="page-item"><a class="page-link" id="a-next" title="Next" href="#">Next</a></li>
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <div class="container">
+                <hr>
+                <a href="https://validator.w3.org/check?verbose=1&amp;uri=referer" title="Valid HTML 5!"><img src="https://www.w3.org/html/logo/downloads/HTML5_Badge_32.png" alt="Valid HTML 5!" height="32" width="32"/></a>
+                <a href="https://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS!"><img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88"/></a>
             </div>
-        </section>
-        <footer>
-        <hr>
-            <a href="https://validator.w3.org/check?verbose=1&amp;uri=referer" title="Valid HTML 5!"><img src="https://www.w3.org/html/logo/downloads/HTML5_Badge_32.png" alt="Valid HTML 5!" height="32" width="32"/></a>
-            <a href="https://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS!"><img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88"/></a>
         </footer>
-        <!-- Add a modal container -->
+
+        <!-- Modal Container -->
         <div class="modal fade" id="modal-record-details" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -163,7 +133,17 @@
                 </div>
             </div>
         </div>
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        <!-- Bootstrap JS -->
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <!-- Leaflet JS -->
+        <script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+
         <script type="text/javascript">
+            // Your existing JavaScript logic goes here
+            // (Copied from your original portal.html)
 
             var map = null;
             var map_layers_control = null;
@@ -294,14 +274,14 @@
                 // get all links
                 for (var i = 0; i < rec.references.length; i++) {
                     if (rec.references[i].value != "None" && rec.references[i].value.lastIndexOf("http", 0) === 0) {
-			console.log(rec.references[i]);
+                        console.log(rec.references[i]);
                         if (rec.references[i].scheme == 'OGC:WMS-1.1.1-http-get-map') {
                             urlbase = rec.references[i].value.split('?')[0];
-                            links += '<span id="' + rec.references[i].value + '##' + rec.title + '" class="btn btn-primary btn-sm">Add to map</span>';
+                            links += '<span id="' + rec.references[i].value + '##' + rec.title + '" class="btn btn-sm btn-secondary add-to-map-btn">Add to map</span>';
                         }
                         else {
                             if (rec.references[i].scheme in protocols) {
-                                links += ' <a class="btn btn-primary btn-sm" title="' + rec.references[i].scheme + '" href="' + rec.references[i].value + '">' + protocols[rec.references[i].scheme][1] + '</a> ';
+                                links += ' <a class="btn btn-sm btn-outline-info" title="' + rec.references[i].scheme + '" href="' + rec.references[i].value + '" target="_blank">' + protocols[rec.references[i].scheme][1] + '</a> ';
                             }
                         }
                     }
@@ -312,23 +292,24 @@
                 var url = csw_url_used + "?service=CSW&version=2.0.2&request=GetRecordById&elementsetname=full&id=" + rec.identifier;
                 var title2 = '<a href="#" class="a-record" data-url="' + url + '" data-bbox="' + rec.bbox.csv + '" title="' + rec.title + '">' + rec.title + '</a>';
                 snippet += '<h5>' + title2 + '</h5>';
-                snippet += '<h5>' + truncate(rec.abstract, 255) + '</h5>';
-                snippet += '<em>' + rec.publisher + '</em><br/>';
-                snippet += '<small><strong>Date</strong>: ' + rec.date + '</small><br/>';
-                snippet += links;
+                snippet += '<p class="abstract-text">' + truncate(rec.abstract, 255) + '</p>';
+                snippet += '<p class="publisher-info"><em>' + rec.publisher + '</em></p>';
+                snippet += '<p class="date-info"><small><strong>Date</strong>: ' + rec.date + '</small></p>';
+                snippet += '<div class="record-links">' + links + '</div>';
                 snippet += '</th></tr>';
                 return snippet;
             }
             function search(serviceType, startposition) {
-                $('#div-csw-results-glass').toggle();
+                $('#div-csw-results-glass').show(); // Show glass overlay
 
                 if (!startposition) {
                     startposition = 1;
                 }
                 var freetext = $('#input-anytext').val().trim();
                 var bbox_enabled = $('#input-bbox').is(':checked');
-                var sortby = $('#select-sortby option:selected').val();
-               
+                var sortby = $('#select-sortby option:selected').val(); // This element does not exist in HTML, might cause error
+
+                var qbbox = ''; // Initialize qbbox
                 if (bbox_enabled && map != null) {
                     bounds = map.getBounds();
                     qbbox = '<ogc:BBOX><ogc:PropertyName>ows:BoundingBox</ogc:PropertyName><gml:Envelope xmlns:gml="http://www.opengis.net/gml"><gml:lowerCorner>' + bounds.getSouth() + ' ' + bounds.getWest() + '</gml:lowerCorner><gml:upperCorner>' + bounds.getNorth() + ' ' + bounds.getEast() + '</gml:upperCorner></gml:Envelope></ogc:BBOX>';
@@ -348,21 +329,21 @@
                 else if (bbox_enabled && map != null) {
                     data += '<csw:Constraint version="1.1.0"><ogc:Filter>' + qbbox + '</ogc:Filter></csw:Constraint>';
                 }
-  
+
                 data += '</csw:Query></csw:GetRecords>';
                 url_para = encodeURI(url_para);
-                
+
                 var requestType = (serviceType === 'ECCC') ? 'POST' : 'GET';
                 var url = (serviceType === 'ECCC') ? csw_url_eccc : csw_url_edh_base + url_para;
 
                 var ajaxSettings = {
                     type: requestType,
-                    url: url,                    
+                    url: url,
                     contentType: 'application/xml',
-                    success: function(xml, status, xhr) {          
+                    success: function(xml, status, xhr) {
                         var tableSelector = (serviceType === 'ECCC') ? '#table-csw-results-eccc' : '#table-csw-results-edh';
                         $(tableSelector).empty();
-                        $('#div-csw-results-glass').toggle();
+                        $('#div-csw-results-glass').hide(); // Hide glass overlay
                         //alert(xml);
                         // derive results for paging
                         var matched = parseInt($(xml).find(escapeElementName('csw:SearchResults')).attr('numberOfRecordsMatched'));
@@ -375,21 +356,23 @@
 
                         if (matched == 0) {
                             $('#div-results').html('');
-                            $(tableSelector).html('<tr><td>No results</td></tr>');
+                            $(tableSelector).html('<tbody><tr><td>No results found.</td></tr></tbody>');
+                            $('#li-previous').addClass('disabled');
+                            $('#li-next').addClass('disabled');
                             return;
                         }
                         if (nextrecord == 0 || nextrecord >= matched) { // at the end
-                            $('#li-next').attr('class', 'disabled');
+                            $('#li-next').addClass('disabled');
                             nextrecord = matched;
                         }
                         else {
-                            $('#li-next').attr('class', 'active');
+                            $('#li-next').removeClass('disabled');
                         }
                         if (startposition == 1) {
-                            $('#li-previous').attr('class', 'disabled');
+                            $('#li-previous').addClass('disabled');
                         }
                         else {
-                            $('#li-previous').attr('class', 'active');
+                            $('#li-previous').removeClass('disabled');
                         }
 
                         var lastRecord = (nextrecord == 0 || nextrecord >= matched) ? matched : nextrecord - 1;
@@ -404,12 +387,12 @@
                     },
                     error: function(xhr, textStatus) {
                         if (xhr.status === 401 && serviceType === 'EDH') {
-                            $('#div-csw-results-glass').toggle();
-                            $('#div-results').html('After login, please search again.');
+                            $('#div-csw-results-glass').hide();
+                            $('#div-results').html('<div class="alert alert-warning" role="alert">Login required for EDH CSW. Please search again after logging in.</div>');
                             console.log('Search error:', textStatus);
                         }else{
-                            $('#div-csw-results-glass').toggle();
-                            $('#div-results').html('An error occurred while fetching data.');
+                            $('#div-csw-results-glass').hide();
+                            $('#div-results').html('<div class="alert alert-danger" role="alert">An error occurred while fetching data. Please try again.</div>');
                             console.log('Search error:', textStatus);
                         }
                     },
@@ -430,7 +413,7 @@
                     ajaxSettings.data = data;
                 }
                 if (serviceType === 'EDH') {
-   
+
                     ajaxSettings.withCredentials = true;
                     ajaxSettings.crossDomain = true;
                     ajaxSettings.xhrFields = { withCredentials: true };
@@ -446,7 +429,7 @@
                 })
                 map.addLayer(basemap);
                 map_layers_control = L.control.layers({"basemap": basemap}, {}, {'collapsed': true}).addTo(map);
-                
+
                 $("#form-search").on('submit', function(e) {
                     e.preventDefault();
                     var activeTabId = $('.nav-tabs .active').attr('id');
@@ -457,7 +440,7 @@
                     }
                 });
                 $('#a-previous').click(function(event){
-                    event.preventDefault(); 
+                    event.preventDefault();
                     startposition2 = $('#input-startposition').val()-pagesize;
                     if (startposition2 < 1) {
                         return;
@@ -469,9 +452,9 @@
                     } else {
                         search("ECCC", startposition2);
                     }
-                }); 
+                });
                 $('#a-next').click(function(event){
-                    event.preventDefault(); 
+                    event.preventDefault();
                     nextrecord2 = parseInt($('#input-nextrecord').val());
                     matched2 = parseInt($('#input-matched').val());
                     if (nextrecord2 == 0 || nextrecord2>=matched2) {
@@ -483,8 +466,8 @@
                     } else {
                         search("ECCC", nextrecord2);
                     }
-                }); 
-                $("table").on("click", "span", function(event) {
+                });
+                $("table").on("click", ".add-to-map-btn", function(event) {
                     var tokens = $(this).attr('id').split('##');
                     var getmap = tokens[0].split('?');
                     var url = getmap[0];
@@ -510,9 +493,9 @@
                     });
                     map_layers_control.addOverlay(layer, tokens[1]);
                     map.addLayer(layer);
-                }); 
+                });
                 $("table").on("mouseenter", "td", function(event) {
-                    bbox = $(this).find('[id]').attr('id');
+                    bbox = $(this).find('a.a-record').data('bbox'); // Use data-bbox from the anchor
                     if (polygon_layer != null && map.hasLayer(polygon_layer)) {
                         map.removeLayer(polygon_layer);
                     }
@@ -600,6 +583,3 @@
         </script>
     </body>
 </html>
-
-
-
