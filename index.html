@@ -98,7 +98,13 @@
             const freetext = $('#input-anytext').val().trim();
             if (freetext) url += `&constraintLanguage=CQL_TEXT&constraint=csw:AnyText LIKE '%${encodeURIComponent(freetext)}%'`;
 
-            $.ajax({ url, dataType: 'xml' })
+            let ajaxOptions = { url, dataType: 'xml' };
+                if (serviceType === 'EDH') {
+                    // include credentials for EDH API
+                    ajaxOptions.crossDomain = true;
+                    ajaxOptions.xhrFields = { withCredentials: true };
+                }
+                $.ajax(ajaxOptions)
              .done(xml => {
                 const rows = [];
                 $(xml).find('csw\\:Record, Record').each(function() {
