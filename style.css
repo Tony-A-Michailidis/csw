@@ -1,0 +1,438 @@
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif; /* Using Inter font from Google Fonts */
+    color: #333; /* Darker grey for better readability */
+    line-height: 1.6;
+    background-color: #f8f9fa; /* Light grey background */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure footer stays at bottom */
+}
+
+/* App Header */
+.app-header {
+    background-color: #0056b3; /* Darker blue for header */
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow */
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 2.5em; /* Larger, more prominent heading */
+    font-weight: 300; /* Lighter weight for modern feel */
+}
+
+.app-header p {
+    margin-top: 5px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* Main Content Area */
+main {
+    flex: 1; /* Allows main content to grow and push footer down */
+}
+
+/* Section/Panel Styling */
+.app-section {
+    background-color: #ffffff;
+    border-radius: 8px; /* Slightly rounded corners */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Softer shadow */
+    padding: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Form Search */
+#form-search .row {
+    margin-bottom: 15px; /* Add space between rows */
+}
+
+/* Input and Button Styling */
+.form-control {
+    border-radius: 5px; /* Slightly rounded input fields */
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem; /* More comfortable padding */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Bootstrap primary blue */
+    border-color: #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+    padding: 0.75rem 1.25rem; /* Consistent padding with input */
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem; /* Smaller padding for small buttons */
+    font-size: 0.875rem;
+    border-radius: 4px;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.btn-outline-info {
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+/* Checkbox Styling */
+.form-check-label {
+    color: #495057;
+    font-weight: 400;
+}
+
+/* Map Styling */
+.map-container {
+    height: 350px; /* Slightly increased height */
+    border-radius: 8px;
+    overflow: hidden; /* Ensures map corners are rounded */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef; /* Light border */
+}
+
+/* CSW Results Area */
+.results-container {
+    position: relative;
+    height: calc(100vh - 400px); /* Adjust height to give more space */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef; /* Light border */
+    border-radius: 8px;
+    overflow: hidden; /* Contains child elements */
+}
+
+.results-glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8); /* Use rgba for transparency */
+    border-radius: 8px;
+    display: none; /* Hidden by default, shown by JS */
+    z-index: 10; /* Above content, below modal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+    background-color: #e9ecef; /* Light grey background for tabs */
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
+    padding: 0 15px; /* Padding for the tabs themselves */
+}
+
+.nav-item {
+    margin-bottom: -1px; /* Overlap border for active tab */
+}
+
+.nav-link {
+    color: #495057; /* Darker grey for inactive tabs */
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border: 1px solid transparent; /* Ensure consistent border space */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.nav-link.active {
+    background-color: #ffffff;
+    color: #007bff;
+    border-color: #dee2e6 #dee2e6 #ffffff;
+    border-bottom-color: transparent; /* Hide bottom border for active tab */
+}
+
+.nav-link:hover:not(.active) {
+    color: #007bff;
+    background-color: #f2f2f2;
+    border-color: #e9ecef #e9ecef #f2f2f2;
+}
+
+/* Tab Content */
+.tab-content {
+    flex: 1; /* Allow tab content to fill remaining space */
+    overflow-y: auto; /* Enable scrolling for results table */
+    padding: 15px;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-bottom: 0; /* Remove default table margin */
+    border-collapse: separate; /* Required for rounded corners on cells */
+    border-spacing: 0;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    vertical-align: top;
+    border-top: 1px solid #e9ecef;
+}
+
+.table thead th {
+    background-color: #f2f2f2;
+    font-weight: 700;
+    color: #343a40;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr:first-child td {
+    border-top: none; /* No top border for the very first row */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Zebra striping for readability */
+}
+
+.table tbody tr:hover {
+    background-color: #e2e6ea; /* Subtle hover effect on rows */
+}
+
+.table h5 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.table h5 a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.table h5 a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.abstract-text {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.publisher-info, .date-info {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.record-links .btn {
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+/* Results Info */
+.results-info {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 0; /* Remove default pagination margin */
+}
+
+.page-item .page-link {
+    border-radius: 5px;
+    margin: 0 3px;
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+/* Footer */
+.app-footer {
+    background-color: #343a40; /* Darker footer background */
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: auto; /* Pushes footer to the bottom */
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+.app-footer hr {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 10px auto;
+    width: 80%;
+}
+
+.app-footer img {
+    margin: 0 10px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.app-footer img:hover {
+    opacity: 1;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    padding: 15px 20px;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.modal-header .close {
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 25px;
+    color: #333;
+}
+
+.modal-body p {
+    margin-bottom: 10px;
+}
+
+.modal-body strong {
+    color: #0056b3; /* Highlight strong text in modal */
+}
+
+.modal-body ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.modal-body ul li {
+    margin-bottom: 5px;
+}
+
+.modal-body ul li a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.modal-body ul li a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* Medium to small screens */
+    .app-header h1 {
+        font-size: 2em;
+    }
+
+    .map-container {
+        height: 300px;
+    }
+
+    .results-container {
+        height: 400px; /* Fixed height for results on smaller screens */
+    }
+
+    .nav-tabs {
+        padding: 0 10px;
+    }
+
+    .nav-link {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 767.98px) { /* Small screens (mobile) */
+    .app-header h1 {
+        font-size: 1.8em;
+    }
+
+    .app-section {
+        padding: 20px;
+    }
+
+    .map-container {
+        height: 250px;
+    }
+
+    .results-container {
+        height: 350px; /* Further adjust height for mobile */
+    }
+
+    .form-check-inline {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .pagination {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .results-info {
+        margin-bottom: 10px;
+    }
+}
+
