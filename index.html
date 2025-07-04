@@ -141,9 +141,12 @@
                     var matched = parseInt(searchResults.attr('numberOfRecordsMatched') || '0', 10);
                     var next = parseInt(searchResults.attr('nextRecord') || '0', 10);
                     updatePagination(startposition, next, matched);
-                    var recs = $(xml).find('csw\\:Record, Record');
+                    // include both Record and BriefRecord elements
+                    var recs = $(xml).find('csw\\:Record, Record, csw\\:BriefRecord, BriefRecord');
                     if (!recs.length) {
-                        recs = $(xml).find('*').filter(function() { return this.localName === 'Record'; });
+                        recs = $(xml).find('*').filter(function() {
+                            return this.localName === 'Record' || this.localName === 'BriefRecord';
+                        });
                     }
                     recs.each(function() {
                         var title = $(this).find('dc\\:title, title').first().text();
