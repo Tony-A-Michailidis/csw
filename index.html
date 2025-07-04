@@ -134,14 +134,18 @@
                 crossDomain: (serviceType === 'EDH'),
                 xhrFields: (serviceType === 'EDH') ? { withCredentials: true } : {},
                 success: function(xml) {
+                    console.log('CSW XML Response:', xml);
                     var tableSelector = (serviceType === 'ECCC') ? '#table-csw-results-eccc tbody' : '#table-csw-results-edh tbody';
                     $(tableSelector).empty();
-                    var resultsEl = $('#cswTabsContent');
                     var searchResults = $(xml).find('csw\\:SearchResults, SearchResults').first();
                     var matched = parseInt(searchResults.attr('numberOfRecordsMatched') || '0', 10);
                     var next = parseInt(searchResults.attr('nextRecord') || '0', 10);
                     updatePagination(startposition, next, matched);
-                    $(xml).find('csw\\:Record, Record').each(function() {
+                    var recs = $(xml).find('csw\\:Record, Record');
+                    if (!recs.length) {
+                        recs = $(xml).find('*').filter(function() { return this.localName === 'Record'; });
+                    }
+                    recs.each(function() {
                         var title = $(this).find('dc\\:title, title').first().text();
                         var date  = $(this).find('dc\\:date, date').first().text();
                         var desc  = $(this).find('dc\\:abstract, abstract').first().text();
@@ -151,9 +155,10 @@
                 error: function(xhr) {
                     if (xhr.status === 401 && serviceType === 'EDH') {
                         $('#div-results').html('After login, please search again.');
-                        var resp = {};
-                        try { resp = JSON.parse(xhr.responseText); } catch(e) {}
-                        if (resp.location) window.open(resp.location, '_blank', 'width=1000,height=1000');
+                        try {
+                            var resp = JSON.parse(xhr.responseText);
+                            if (resp.location) window.open(resp.location, '_blank', 'width=1000,height=1000');
+                        } catch(e) { console.log('Error parsing 401 response:', e); }
                     } else {
                         $('#div-results').html('An error occurred while fetching data.');
                     }
