@@ -13,6 +13,7 @@
         .search-bar .form-control { border-right: 0; }
         .search-bar .input-group-append .btn { border-radius: 0 0.5rem 0.5rem 0; }
         .table thead th { border-bottom: 2px solid #dee2e6; }
+        #div-results { margin-top: 1rem; }
     </style>
 </head>
 <body>
@@ -21,14 +22,12 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <form id="form-search">
-                    <!-- Search input + button -->
                     <div class="input-group input-group-lg mb-4 search-bar">
                         <input type="text" id="input-anytext" class="form-control" placeholder="Search Terms" />
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Search</button>
                         </div>
                     </div>
-                    <!-- Tabs -->
                     <ul class="nav nav-tabs" id="cswTabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="tab-eccc" data-toggle="tab" href="#tab-csw-results-eccc" role="tab">Our institute's data</a>
@@ -42,11 +41,7 @@
                             <div class="table-responsive">
                                 <table class="table table-hover" id="table-csw-results-eccc">
                                     <thead>
-                                        <tr>
-                                            <th scope="col">Title</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Description</th>
-                                        </tr>
+                                        <tr><th>Title</th><th>Date</th><th>Description</th></tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -56,18 +51,14 @@
                             <div class="table-responsive">
                                 <table class="table table-hover" id="table-csw-results-edh">
                                     <thead>
-                                        <tr>
-                                            <th scope="col">Title</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Description</th>
-                                        </tr>
+                                        <tr><th>Title</th><th>Date</th><th>Description</th></tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <!-- Pagination -->
+                    <div id="div-results" class="text-center text-muted"></div>
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center">
                             <li class="page-item" id="li-previous"><a class="page-link" id="a-previous" href="#">Previous</a></li>
@@ -78,62 +69,90 @@
             </div>
         </div>
     </div>
-    <!-- Footer validators -->
     <footer class="text-center py-3">
-        <a href="https://validator.w3.org/check?verbose=1&amp;uri=referer" title="Valid HTML 5!"><img src="https://www.w3.org/html/logo/downloads/HTML5_Badge_32.png" alt="Valid HTML 5!" height="32" width="32" /></a>
-        <a href="https://jigsaw.w3.org/css-validator/check/referer" title="Valid CSS!"><img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88" /></a>
+        <a href="https://validator.w3.org/check?verbose=1&amp;uri=referer"><img src="https://www.w3.org/html/logo/downloads/HTML5_Badge_32.png" alt="Valid HTML5!" height="32" width="32"/></a>
+        <a href="https://jigsaw.w3.org/css-validator/check/referer"><img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88"/></a>
     </footer>
     <!-- jQuery & Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script>
-        const csw_url = {
-            ECCC: 'https://catalogue.ec.gc.ca/geonetwork/srv/eng/csw',
-            EDH: 'https://api-proxy-dev.edh-cde.unclass.dfo-mpo.gc.ca/data-sharing/external/eng/csw'
-        };
-        const pagesize = 10;
+        var csw_url_eccc_base = 'https://catalogue.ec.gc.ca/geonetwork/srv/eng/csw';
+        var csw_url_edh_base  = 'https://api-proxy-dev.edh-cde.unclass.dfo-mpo.gc.ca/data-sharing/external/eng/csw';
+        var pagesize = 10;
 
-        function search(serviceType, startPosition = 1) {
-            let url = `${csw_url[serviceType]}?service=CSW&version=2.0.2&request=GetRecords&ElementSetName=full&typeNames=csw:Record&maxRecords=${pagesize}&startPosition=${startPosition}`;
-            const freetext = $('#input-anytext').val().trim();
-            if (freetext) url += `&constraintLanguage=CQL_TEXT&constraint=csw:AnyText LIKE '%${encodeURIComponent(freetext)}%'`;
+        function search(serviceType, startposition) {
+            if (!startposition) startposition = 1;
+            var freetext = $('#input-anytext').val().trim();
+            var url_para = '?service=CSW&version=2.0.2&request=GetRecords&ElementSetName=full&maxRecords=' + pagesize + '&typeNames=csw:Record';
+            var data = '<csw:GetRecords maxRecords="' + pagesize + '" service="CSW" version="2.0.2"><csw:Query typeNames="csw:Record"><csw:ElementSetName>full</csw:ElementSetName>';
+            if (freetext) {
+                url_para += '&constraintLanguage=CQL_TEXT&constraint=csw:AnyText LIKE \'%' + freetext + '%\'';
+                data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:PropertyIsLike wildCard="%" singleChar="." escapeChar="!"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>%' + freetext + '%</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></csw:Constraint>';
+            }
+            data += '</csw:Query></csw:GetRecords>';
+            url_para = encodeURI(url_para);
+            var requestType = (serviceType === 'ECCC') ? 'POST' : 'GET';
+            var url = (serviceType === 'ECCC') ? csw_url_eccc_base : csw_url_edh_base + url_para;
 
-            let ajaxOptions = { url, dataType: 'xml' };
-                if (serviceType === 'EDH') {
-                    // include credentials for EDH API
-                    ajaxOptions.crossDomain = true;
-                    ajaxOptions.xhrFields = { withCredentials: true };
+            var ajaxSettings = {
+                type: requestType,
+                url: url,
+                contentType: 'application/xml',
+                success: function(xml, status, xhr) {
+                    var tableSelector = (serviceType === 'ECCC') ? '#table-csw-results-eccc tbody' : '#table-csw-results-edh tbody';
+                    $(tableSelector).empty();
+                    $('#div-results').empty();
+                    $(xml).find('csw\\:Record, Record').each(function() {
+                        var title = $(this).find('dc\\:title, title').first().text();
+                        var date  = $(this).find('dc\\:date, date').first().text();
+                        var desc  = $(this).find('dc\\:abstract, abstract').first().text();
+                        $(tableSelector).append('<tr><td>' + title + '</td><td>' + date + '</td><td>' + desc + '</td></tr>');
+                    });
+                },
+                error: function(xhr, textStatus) {
+                    if (xhr.status === 401 && serviceType === 'EDH') {
+                        $('#div-results').html('After login, please search again.');
+                        console.log('Search error:', textStatus);
+                    } else {
+                        $('#div-results').html('An error occurred while fetching data.');
+                        console.log('Search error:', textStatus);
+                    }
+                },
+                complete: function(xhr, textStatus) {
+                    if (xhr.status === 401 && serviceType === 'EDH') {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.location) {
+                                window.open(response.location, '_blank', 'width=1000,height=1000');
+                            }
+                        } catch(e) {
+                            console.log('Error parsing response:', e);
+                        }
+                    }
                 }
-                $.ajax(ajaxOptions)
-             .done(xml => {
-                const rows = [];
-                $(xml).find('csw\\:Record, Record').each(function() {
-                    const title = $(this).find('dc\\:title, title').first().text();
-                    const date = $(this).find('dc\\:date, date').first().text();
-                    const desc = $(this).find('dc\\:abstract, abstract').first().text();
-                    rows.push(`<tr><td>${title}</td><td>${date}</td><td>${desc}</td></tr>`);
-                });
-                const tableId = serviceType === 'EDH' ? '#table-csw-results-edh' : '#table-csw-results-eccc';
-                $(`${tableId} tbody`).html(rows.join(''));
-            })
-            .fail(() => alert(`Failed to fetch records from ${serviceType}`));
+            };
+            if (serviceType === 'ECCC') {
+                ajaxSettings.data = data;
+            }
+            if (serviceType === 'EDH') {
+                ajaxSettings.withCredentials = true;
+                ajaxSettings.crossDomain = true;
+                ajaxSettings.xhrFields = { withCredentials: true };
+            }
+            $.ajax(ajaxSettings);
         }
 
-        $(function() {
-            $('#form-search').on('submit', e => {
+        $(document).ready(function() {
+            $('#form-search').on('submit', function(e) {
                 e.preventDefault();
-                const service = $('.nav-tabs .active').attr('id') === 'tab-edh' ? 'EDH' : 'ECCC';
+                var service = $('.nav-tabs .active').attr('id') === 'tab-edh' ? 'EDH' : 'ECCC';
                 search(service);
             });
-
-            $('a[data-toggle="tab"]').on('shown.bs.tab', e => {
-                const service = $(e.target).attr('id') === 'tab-edh' ? 'EDH' : 'ECCC';
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                var service = $(e.target).attr('id') === 'tab-edh' ? 'EDH' : 'ECCC';
                 search(service);
             });
-
-            $('#a-previous').click(e => { e.preventDefault(); /* implement if needed */ });
-            $('#a-next').click(e => { e.preventDefault(); /* implement if needed */ });
-
             // initial load
             search('ECCC');
         });
