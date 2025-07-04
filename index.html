@@ -34,15 +34,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Checkboxes and labels removed from here -->
                             <div class="col-md-6 col-lg-4 text-md-right mt-3 mt-md-0">
-                                <div class="form-check form-check-inline mr-4">
-                                    <input class="form-check-input" type="checkbox" id="input-bbox">
-                                    <label class="form-check-label" for="input-bbox">Filter by location</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="input-footprints">
-                                    <label class="form-check-label" for="input-footprints">Footprints</label>
-                                </div>
+                                <!-- This div is now empty as the checkboxes are removed.
+                                     You might consider removing this div entirely if no other elements
+                                     are intended to be in this layout spot. -->
                             </div>
                         </div>
 
@@ -282,30 +278,30 @@
                     startposition = 1;
                 }
                 var freetext = $('#input-anytext').val().trim();
-                var bbox_enabled = $('#input-bbox').is(':checked');
+                // var bbox_enabled = $('#input-bbox').is(':checked'); // Removed
                 var sortby = $('#select-sortby option:selected').val(); // This element does not exist in HTML, might cause error
 
                 var qbbox = ''; // Initialize qbbox
-                if (bbox_enabled) {
-                    // Since map is removed, we cannot get bounds from it.
-                    // If bbox filtering is still desired, this logic needs to be re-thought (e.g., manual input, or a different map library).
-                    // For now, it will effectively do nothing without a map.
-                }
+                // if (bbox_enabled) { // Removed map != null condition
+                //     // Since map is removed, we cannot get bounds from it.
+                //     // If bbox filtering is still desired, this logic needs to be re-thought (e.g., manual input, or a different map library).
+                //     // For now, it will effectively do nothing without a map.
+                // }
 
                 url_para = '?service=CSW&version=2.0.2&request=GetRecords&resultType=results&startPosition=' + startposition + '&maxRecords=' + pagesize + '&typeNames=csw:Record&ElementSetName=full';
                 data = '<csw:GetRecords maxRecords="' + pagesize + '" startPosition="' + startposition + '" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" resultType="results" service="CSW" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><csw:Query typeNames="csw:Record"><csw:ElementSetName>full</csw:ElementSetName>';
                 if (freetext != '') {
                     url_para += '&constraintLanguage=CQL_TEXT&constraint_language_version=1.1.0&constraint=csw:AnyText LIKE \'' + $("#input-anytext").val().trim() + '\'';
-                    if (bbox_enabled) {
-                        data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:And><ogc:PropertyIsLike escapeChar="\\" singleChar="_" wildCard="%"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>' + $("#input-anytext").val().trim() + '</ogc:Literal></ogc:PropertyIsLike>' + qbbox + '</ogc:And></ogc:Filter></csw:Constraint>';
-                    }
-                    else {
+                    // if (bbox_enabled) { // Removed map != null condition
+                    //     data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:And><ogc:PropertyIsLike escapeChar="\\" singleChar="_" wildCard="%"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>' + $("#input-anytext").val().trim() + '</ogc:Literal></ogc:PropertyIsLike>' + qbbox + '</ogc:And></ogc:Filter></csw:Constraint>'; // Fallback without bbox
+                    // }
+                    // else {
                         data += '<csw:Constraint version="1.1.0"><ogc:Filter><ogc:PropertyIsLike escapeChar="\\" singleChar="_" wildCard="%"><ogc:PropertyName>csw:AnyText</ogc:PropertyName><ogc:Literal>' + $("#input-anytext").val().trim() + '</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></csw:Constraint>';
-                    }
+                    // }
                 }
-                else if (bbox_enabled) {
-                    data += '<csw:Constraint version="1.1.0"><ogc:Filter>' + qbbox + '</ogc:Filter></csw:Constraint>';
-                }
+                // else if (bbox_enabled) { // Removed map != null condition
+                //     data += '<csw:Constraint version="1.1.0"><ogc:Filter>' + qbbox + '</ogc:Filter></csw:Constraint>';
+                // }
 
                 data += '</csw:Query></csw:GetRecords>';
                 url_para = encodeURI(url_para);
