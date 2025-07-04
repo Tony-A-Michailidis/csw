@@ -112,9 +112,8 @@ main {
 /* CSW Results Area */
 .results-container {
     position: relative;
-    /* Adjusted height: Header (60px) + main padding (40px) + section padding (60px) + form row (approx 50px) + map (350px) + map margin (20px) + results-container padding (30px) + footer (approx 100px) */
-    /* Roughly 660px already taken, so 100vh - 660px */
-    height: calc(100vh - 660px); /* Adjusted height for full-width layout */
+    /* Adjusted height to make it longer */
+    height: calc(100vh - 450px);
     display: flex;
     flex-direction: column;
     border: 1px solid #e9ecef; /* Light border */
