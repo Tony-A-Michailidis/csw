@@ -16,7 +16,7 @@
     <body>
         <header class="app-header">
             <div class="container">
-                <!-- Title and caption removed as requested -->
+                <h1 class="header-title">Some imaginary institute's portal</h1>
             </div>
         </header>
 
@@ -24,7 +24,7 @@
             <section class="app-section">
                 <form id="form-search">
                     <input type="hidden" id="input-startposition"/>
-                    <input type="hidden" id="input-matched"/>
+                    <input type="hidden" id="hidden-matched"/>
                     <input type="hidden" id="input-nextrecord"/>
                     <div class="row mb-3 align-items-center">
                         <div class="col-md-6 col-lg-4">
@@ -446,7 +446,7 @@
                     }
                     //check which tab is active, then search based on the type
                     var activeTabId = $('.nav-tabs .active').attr('id');
-                    if (activeTabId === 'tab-edh') {
+                    if (activeTabId === "tab-edh") {
                         search("EDH", startposition2);
                     } else {
                         search("ECCC", startposition2);
